@@ -25,7 +25,7 @@ contract contrato_prestacao {
 	address payable payableCliente;
 	address payable payablePrestador;
 	address payable payableContrato;
-	//---------------2------------------------------------------------// mudar o estado Encerrado para Finalizado   ou    Criado  para  Implementado
+	//---------------2------------------------------------------------// 
 	enum Estado {Criado, Estabelecido, Fornecido, Encerrado, Cancelado}
 	Estado private estado;
 	
