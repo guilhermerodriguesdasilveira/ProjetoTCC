@@ -6,7 +6,7 @@ contract contrato_prestacao {
     //iniciando as variáveis
     uint256 public preco;          //preço do contrato em ether
 	uint8 public prazoTotal;       //prazo total do contrato em dias
-	uint256 public tempoRestante;  //tempo restante para acabar o contrato    diasRestantes
+	uint256 public tempoRestante;  //tempo restante para acabar o contrato    
 	uint8 public qntVisitas;       //quantidade de visitas tecnicas
 
 	//inicia a garantia paga como falso
@@ -36,6 +36,7 @@ contract contrato_prestacao {
 		address _cliente
 		
 		)public {
+		    
 		preco = _preco * 1000000000000000000;
 		prazoTotal = _prazoTotal;
 	    qntVisitas = _qntVisitas;
@@ -76,8 +77,7 @@ contract contrato_prestacao {
 
 		if(garantiaPrestadorPaga == true){
 			contratoEstabelecido();
-		}
-	}
+		}	}
 
 	function garantiaPrestador() public apenasPrestador payable {
 		require(msg.value == preco/10, "Preço errado ");
@@ -86,10 +86,14 @@ contract contrato_prestacao {
 		
 		if(garantiaClientePaga == true){
 			contratoEstabelecido();
-		}
+		}	}
+		
+	function contratoEstabelecido() private {
+		require(garantiaPrestadorPaga == true && garantiaClientePaga == true,"Garantias não feitas");
+		estado = Estado.Estabelecido;
+		tempoRestante = now + (prazoTotal * 1 days);
 	}
-	
-	
+	//-------------------5--------------------------------------------//
 	function estornarGarantias() public payable {
 		require(estado == Estado.Criado, "Estorno Invalido");
 		if(garantiaPrestadorPaga == true){
@@ -103,12 +107,9 @@ contract contrato_prestacao {
 		estado = Estado.Cancelado;
 	}
 	
-	function contratoEstabelecido() private {
-		require(garantiaPrestadorPaga == true && garantiaClientePaga == true,"Garantias não feitas");
-		estado = Estado.Estabelecido;
-		tempoRestante = now + (prazoTotal * 1 days);
-		}
-	//--------------------5-------------------------------------------//
+	//--------------------6-------------------------------------------//
+	
+	
 	function servicoPrestado() public apenasPrestador{
 		require(estado == Estado.Estabelecido, "Serviço não válido");
 		if(now <= tempoRestante){
@@ -124,10 +125,10 @@ contract contrato_prestacao {
 			estado = Estado.Encerrado;
 			depositar();
 		} else {
-			estado = Estado.Cancelado;
+			abortar();
 		}
 	}
-    //---------------------6------------------------------------------//
+    //---------------------7------------------------------------------//
 	function numeroContrato() public view returns(address contratoAddr){
 		return address(this);
 	}
@@ -147,13 +148,11 @@ contract contrato_prestacao {
 			return 0;
 		}
 	}
-   //------------------------7---------------------------------------// 
+   //------------------------8---------------------------------------// 
 	function tarefasContrato() public pure returns(string memory tarefas){
 		return ("As tarefas a serem feitas para que o contrato seja dado como encerrado são as seguites:" 
-		"1 Formatação dos computadores;"
-		"2 Instalação do sistema operacional;"
-		"3 Limpeza dos computadores;"
-		"4 atender as visitas técnicas."
+		"1 Formatação dos computadores;"	"2 Instalação do sistema operacional;"
+		"3 Limpeza dos computadores;"    	"4 atender as visitas técnicas."
 		);
 	}
 		
@@ -172,9 +171,7 @@ contract contrato_prestacao {
 		}
 		if(estado == Estado.Cancelado){
 			return ("Contrato Cancelado");
-		}
-	}
-}
-
-
-
+		}	}   }
+		
+		
+		
